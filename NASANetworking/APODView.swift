@@ -14,7 +14,6 @@ struct APODView: View {
         picture.mediaType == "image"
     }
     @State var imgURL:URL?
-    @State var fetchingImg:Bool = false
     
     var body: some View {
         VStack {
@@ -48,11 +47,9 @@ struct APODView: View {
         }
         .padding()
         .onAppear {
-            fetchingImg = true
             if let hdurl = picture.hdurl {
                 self.imgURL = URL(string:hdurl)
             }
-            fetchingImg = false
         }
     }
 }

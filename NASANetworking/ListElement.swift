@@ -13,7 +13,6 @@ struct ListElement: View {
         picture.mediaType == "image"
     }
     @State var imgURL:URL?
-    @State var fetchingImg:Bool = false
     
     var body: some View {
         HStack {
@@ -48,16 +47,11 @@ struct ListElement: View {
                     }
                 }
             }
-            if(fetchingImg) {
-                ProgressView()
-            }
         }
         .onAppear {
-            fetchingImg = true
             if let url = picture.url {
                 self.imgURL = URL(string:url)
             }
-            fetchingImg = false
         }
     }
 }

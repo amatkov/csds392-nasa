@@ -61,15 +61,12 @@ struct NasaImage {
 struct ContentView: View {
     let nasa = NasaImage()
     @State var images: [Picture] = []
-    @State var fetching = false
     
     func loadImages() {
         Task {
-            fetching = true
             if let response = await nasa.getEntries() {
                 self.images = response
             }
-            fetching = false
         }
     }
     
