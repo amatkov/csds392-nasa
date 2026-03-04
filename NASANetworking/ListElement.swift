@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+/**
+ This is a struct that defines the view of an Astronomy Picture of the Day from NASA that will be used in a scrollable navigation list. It has built-in handling for non-image types, and uses a switch inside AsyncImage for the best possible UX while the image loads.
+ */
 struct ListElement: View {
     var picture:Picture
     var hasImage:Bool {
@@ -33,7 +36,7 @@ struct ListElement: View {
             }
             Spacer()
             if hasImage {
-                AsyncImage(url: imgURL) { phase in
+                AsyncImage(url: imgURL) { phase in //Again I used a switch here. Way easier than booleans
                     switch phase {
                     case .empty:
                         ProgressView()
@@ -42,14 +45,14 @@ struct ListElement: View {
                             .aspectRatio(contentMode: .fit)
                     case .failure:
                         Text("Failed to load image.")
-                    @unknown default:
+                    @unknown default: // Swift told me to put this here to protect for future async image updates. I did it to get rid of the error
                         Text("Unknown error.")
                     }
                 }
             }
         }
         .onAppear {
-            if let url = picture.url {
+            if let url = picture.url { // Non-high-definition url for quicker image loading. Still takes time which is why we need the switch
                 self.imgURL = URL(string:url)
             }
         }

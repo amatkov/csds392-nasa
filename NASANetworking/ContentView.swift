@@ -15,31 +15,31 @@ struct Picture: Codable, Identifiable {
     var hdurl: String?
     var mediaType: String
     var title: String
-    var url: String?
+    var url: String? // I think there is always a URL, but I left it optional just in case
     
     enum CodingKeys: String, CodingKey {
         case date, explanation, hdurl, title, url
-        case mediaType = "media_type"
+        case mediaType = "media_type" // Conform to swift standard camelcase
     }
 }
 
 struct NasaImage {
     func getEntries() async -> [Picture]? {
         let today = Date()
-        let daysAgo = -5
+        let daysAgo = -5 // Amount of past days to fetch APOD
         let calendar = Calendar.current
         let key = "DEMO_KEY" // Change for different API key
         
         if let date = calendar.date(byAdding: .day, value: daysAgo, to: today) {
             
             let dateFormatter = DateFormatter()
-            dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+            dateFormatter.locale = Locale(identifier: "en_US_POSIX") // Not sure if needed, saw it on StackOverflow
             dateFormatter.dateFormat = "yyyy-MM-dd"
             
             let todayString = dateFormatter.string(from: today)
             let startString = dateFormatter.string(from: date)
             
-            let urlString = "https://api.nasa.gov/planetary/apod?start_date=" + startString + "&end_date=" + todayString + "&api_key=" + key
+            let urlString = "https://api.nasa.gov/planetary/apod?start_date=" + startString + "&end_date=" + todayString + "&api_key=" + key // By completing in one API call, program is more efficient for demo rate limits
             
             let session = URLSession.shared
             
@@ -49,7 +49,7 @@ struct NasaImage {
                 do {
                     let (data, _) = try await session.data(for: request)
                     let decoder = JSONDecoder()
-                    let pictures: [Picture] = try decoder.decode([Picture].self, from: data)
+                    let pictures: [Picture] = try decoder.decode([Picture].self, from: data) // Apparently you can decode an array of JSON to an array of struct. This is a lot easier than what I was trying
                     return pictures
                 } catch {}
             }
@@ -76,7 +76,7 @@ struct ContentView: View {
                 Text("NASA APOD")
                     .font(.largeTitle)
                     .bold()
-                Spacer()
+                Spacer() // I think this is how you are supposed to align to right
             }
             .padding()
             VStack {

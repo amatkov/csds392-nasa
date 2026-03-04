@@ -7,7 +7,9 @@
 
 import SwiftUI
 
-
+/**
+ This is a struct that defines the view of a single Astronomy Picture of the Day from NASA. It has built-in handling for non-image types, and uses a switch inside AsyncImage for the best possible UX while the image loads.
+ */
 struct APODView: View {
     var picture: Picture
     var hasImage:Bool {
@@ -24,7 +26,7 @@ struct APODView: View {
                 Spacer()
             }
             if hasImage {
-                AsyncImage(url: imgURL) { phase in
+                AsyncImage(url: imgURL) { phase in // Switching for AsyncImages is way more intuitive than using booleans
                     switch phase {
                     case .empty:
                         ProgressView()
@@ -33,7 +35,7 @@ struct APODView: View {
                             .aspectRatio(contentMode: .fit)
                     case .failure:
                         Text("Failed to load image.")
-                    @unknown default:
+                    @unknown default: // Swift told me to put this here to protect for future async image updates. I did it to get rid of the error
                         Text("Unknown error.")
                     }
                 }
@@ -47,7 +49,7 @@ struct APODView: View {
         }
         .padding()
         .onAppear {
-            if let hdurl = picture.hdurl {
+            if let hdurl = picture.hdurl { // Uses hdurl for image quality. Takes a while to load
                 self.imgURL = URL(string:hdurl)
             }
         }
