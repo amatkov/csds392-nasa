@@ -46,6 +46,7 @@ struct APODView: View {
                     .multilineTextAlignment(.leading)
                 Spacer()
             }
+            Spacer()
         }
         .padding()
         .onAppear {

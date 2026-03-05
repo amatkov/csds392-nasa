@@ -50,7 +50,7 @@ struct NasaImage {
                     let (data, _) = try await session.data(for: request)
                     let decoder = JSONDecoder()
                     let pictures: [Picture] = try decoder.decode([Picture].self, from: data) // Apparently you can decode an array of JSON to an array of struct. This is a lot easier than what I was trying
-                    return pictures
+                    return pictures.reversed()
                 } catch {}
             }
         }
