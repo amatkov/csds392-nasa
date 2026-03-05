@@ -22,6 +22,11 @@ struct Picture: Codable, Identifiable {
         case mediaType = "media_type" // Conform to swift standard camelcase
     }
 }
+extension Picture{
+    static let fallbackPic = Picture(date: "6969-06-09", explanation: "An error occured",hdurl: "https://thumbs.dreamstime.com/z/erreur-28681424.jpg", mediaType: "image", title: "Oops", url: "https://thumbs.dreamstime.com/z/erreur-28681424.jpg" )
+}
+
+
 
 struct NasaImage {
     func getEntries() async -> [Picture]? {
@@ -29,6 +34,7 @@ struct NasaImage {
         let daysAgo = -5 // Amount of past days to fetch APOD
         let calendar = Calendar.current
         let key = "DEMO_KEY" // Change for different API key
+        
         
         if let date = calendar.date(byAdding: .day, value: daysAgo, to: today) {
             
@@ -40,6 +46,7 @@ struct NasaImage {
             let startString = dateFormatter.string(from: date)
             
             let urlString = "https://api.nasa.gov/planetary/apod?start_date=" + startString + "&end_date=" + todayString + "&api_key=" + key // By completing in one API call, program is more efficient for demo rate limits
+            print(urlString)
             
             let session = URLSession.shared
             
@@ -47,11 +54,24 @@ struct NasaImage {
                 
                 let request = URLRequest(url: url)
                 do {
-                    let (data, _) = try await session.data(for: request)
+                    let (data, response) = try await session.data(for: request)
+                    //print(data)
+                    guard
+                        let httpResponse = response as? HTTPURLResponse,
+                        httpResponse.statusCode == 200
+                    else {
+                        return [
+                            Picture.fallbackPic
+                        ]
+                    }
+                    
                     let decoder = JSONDecoder()
                     let pictures: [Picture] = try decoder.decode([Picture].self, from: data) // Apparently you can decode an array of JSON to an array of struct. This is a lot easier than what I was trying
                     return pictures.reversed()
-                } catch {}
+                } catch {
+                    
+                    print(error)
+                }
             }
         }
         return nil
@@ -93,7 +113,9 @@ struct ContentView: View {
             }
         }
         .onAppear {
+            
             loadImages()
+            print("hi")
         }
     }
 }
